@@ -1,20 +1,23 @@
 {
-    "name": "git-rosettastone",
-    "version": "1.0.0",
-    "description": "Reading Project",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node ./src/index.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/Liam-CurmideGray/Git-RosettaStone.git"
-    },
-    "author": "Liam CurmideGray",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/Liam-CurmideGray/Git-RosettaStone/issues"
-    },
-    "homepage": "https://github.com/Liam-CurmideGray/Git-RosettaStone#readme"
+  "name": "gig-rosettastone",
+  "version": "1.0.0",
+  "description": "Reading Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/perej3/gig-project-setup.git"
+  },
+  "author": "Liam CurmideGray",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Liam-CurmideGray/Git-RosettaStone/issues"
+},
+"homepage": "https://github.com/Liam-CurmideGray/Git-RosettaStone#readme",
+"dependencies": {
+    "axios": "^0.19.0"
+  }
 }
