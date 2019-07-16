@@ -18,31 +18,9 @@ let starShipsAPI;
       method: 'get'
 
     });
-
     starShipResponse.push(...starShipsAPI.data.results);
 
   }
-
-  // function arrayToObject(array, keyField) {
-  //   let finalObj = {};
-
-
-
-  //   array.forEach(element => {
-  //     const newKey = element[keyField];
-
-  //     finalObj = {
-  //       ...finalObj,
-  //       [newKey]: element
-  //     };
-  //   });
-
-  //   return finalObj;
-
-  // };
-
-  //const ShipObj = arrayToObject(starShipResponse, "name");
-
 
   function getStarships() {
     let shipObj = [];
@@ -57,17 +35,8 @@ let starShipsAPI;
         }
       });
 
-      // shipObj = {...shipObj,
-      //   [newKey]: [
-      //     name = starShipResponse[i].name,
-      //     value = {
-      //     url = gettingPilots
-      //     }
-      //   ]
-      // }
     }
 
-    //  console.log(shipObj);
     return shipObj;
   }
 
@@ -82,7 +51,8 @@ let starShipsAPI;
     type: 'list',
     name: 'Pilots',
     message: 'Select Pilot',
-    choices(answers) { return GetPilots(answers.Starships) }
+    choices(answers)
+    {return GetPilots(answers.Starships) }
   }];
 
   async function GetPilots(StarshipKey) {
@@ -94,7 +64,7 @@ let starShipsAPI;
       array.push('No Pilots pilot this Ship');
       return array;
     } 
-    // else {
+
     for (i = 0; i < StarshipKey.length; i++) {
       let pilot = await axios({
         url: StarshipKey[i],
@@ -108,21 +78,14 @@ let starShipsAPI;
         }
       });
     } 
-  //}
-    //console.log(array);
+  
     return array
 
   };
-
-
 
   inquirer.prompt(StarshipQ).then(answers => {
     console.info('Ship Selected:', answers.Starships.name);
     console.info('Pilot Selected:', answers.Pilots.name);
     console.info('Pilot Details', answers.Pilots);
-
-
   });
-
-
 })()
