@@ -4,20 +4,24 @@
   "description": "Reading Project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js"
+    "start": "node bin/index.js",
+    "compile": "mkdir src"
+  },
+  "bin": {
+    "starwars": "./bin/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/perej3/gig-project-setup.git"
+    "url": "git+https://github.com/Liam-CurmideGray/Git-RosettaStone.git"
   },
   "author": "Liam CurmideGray",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Liam-CurmideGray/Git-RosettaStone/issues"
-},
-"homepage": "https://github.com/Liam-CurmideGray/Git-RosettaStone#readme",
-"dependencies": {
-    "axios": "^0.19.0"
+  },
+  "homepage": "https://github.com/Liam-CurmideGray/Git-RosettaStone#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "inquirer": "^6.4.1"
   }
 }
