@@ -4,88 +4,94 @@ const axios = require('axios');
 const inquirer = require('inquirer');
 
 
-let starShipResponse = [];
-let starShipsAPI;
+getAPI();
 
 
-; (async () => {
-  for (i = 1; i <= 4; i++) {
 
+async function getAPI() {
 
-    starShipsAPI = await axios({
+  let StarshipUrl = `https://swapi.co/api/starships/`;  
+  let starShipResponse = [];
 
-      url: `https://swapi.co/api/starships/?page=${i}`,
-      method: 'get'
+  while (StarshipUrl != null) {
 
-    });
-    starShipResponse.push(...starShipsAPI.data.results);
+    const starShipsAPI = await axios.get(StarshipUrl);
 
-  }
+    for (i = 0; i < starShipsAPI.data.results.length; i++) {
+      let ShipName = starShipsAPI.data.results[i].name;
+      let PilotUrls = starShipsAPI.data.results[i].pilots;
 
-  function getStarships() {
-    let shipObj = [];
-    for (i = 0; i < starShipResponse.length; i++) {
-
-
-      shipObj.push({
-        name: starShipResponse[i].name,
+      starShipResponse.push({
+        name: ShipName,
         value: {
-          name: starShipResponse[i].name,
-          url: starShipResponse[i].pilots
+          name: ShipName,
+          url: PilotUrls
         }
       });
 
     }
-
-    return shipObj;
+    StarshipUrl = starShipsAPI.data.next;
+    
   }
+  InquirerQ(starShipResponse);
+}
 
 
-  let StarshipQ = [{
+function Questions(starShipResponse) {
+  return [{
     type: 'list',
     name: 'Starships',
     message: 'Select a Starship',
-    choices: getStarships()
+    choices: starShipResponse
   },
   {
     type: 'list',
     name: 'Pilots',
     message: 'Select Pilot',
-    choices(answers)
-    {return GetPilots(answers.Starships) }
+    choices(answers) { return GetPilots(answers.Starships) }
   }];
 
-  async function GetPilots(StarshipKey) {
-    StarshipKey = StarshipKey.url;
- 
-    let array = [];
+}
 
-    if(StarshipKey.length === 0) {
-      array.push('No Pilots pilot this Ship');
-      return array;
-    } 
+async function GetPilots(StarshipKey) {
+  StarshipKey = StarshipKey.url;
 
-    for (i = 0; i < StarshipKey.length; i++) {
-      let pilot = await axios({
-        url: StarshipKey[i],
-        method: 'get'
-      });
-      array.push({
+  let array = [];
+
+  if (StarshipKey.length === 0) {
+    array.push({
+      name: "No Pilots",
+      value: {
+        name: "No Details found",
+       
+      }
+    });
+    return array;
+  }
+
+  for (i = 0; i < StarshipKey.length; i++) {
+    let pilot = await axios({
+      url: StarshipKey[i],
+      method: 'get'
+    });
+    array.push({
+      name: pilot.data.name,
+      value: {
         name: pilot.data.name,
-        value: {
-          name: pilot.data.name,
-          height: pilot.data.height
-        }
-      });
-    } 
-  
-    return array
+        height: pilot.data.height
+      }
+    });
+  }
 
-  };
+  return array
 
-  inquirer.prompt(StarshipQ).then(answers => {
+};
+
+function InquirerQ(starShipResponse) {
+
+  inquirer.prompt(Questions(starShipResponse)).then(answers => {
     console.info('Ship Selected:', answers.Starships.name);
     console.info('Pilot Selected:', answers.Pilots.name);
     console.info('Pilot Details', answers.Pilots);
   });
-})()
+}
