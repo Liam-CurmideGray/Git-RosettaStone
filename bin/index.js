@@ -3,14 +3,11 @@
 const axios = require('axios');
 const inquirer = require('inquirer');
 
-
 getAPI();
-
-
 
 async function getAPI() {
 
-  let StarshipUrl = `https://swapi.co/api/starships/`;  
+  let StarshipUrl = `https://swapi.co/api/starships/`;
   let starShipResponse = [];
 
   while (StarshipUrl != null) {
@@ -31,11 +28,19 @@ async function getAPI() {
 
     }
     StarshipUrl = starShipsAPI.data.next;
-    
+
   }
   InquirerQ(starShipResponse);
 }
 
+
+function InquirerQ(starShipResponse) {
+  inquirer.prompt(Questions(starShipResponse)).then(answers => {
+    console.info('Ship Selected:', answers.Starships.name);
+    console.info('Pilot Selected:', answers.Pilots.name);
+    console.info('Pilot Details', answers.Pilots);
+  });
+}
 
 function Questions(starShipResponse) {
   return [{
@@ -63,7 +68,7 @@ async function GetPilots(StarshipKey) {
       name: "No Pilots",
       value: {
         name: "No Details found",
-       
+
       }
     });
     return array;
@@ -82,16 +87,6 @@ async function GetPilots(StarshipKey) {
       }
     });
   }
-
   return array
 
 };
-
-function InquirerQ(starShipResponse) {
-
-  inquirer.prompt(Questions(starShipResponse)).then(answers => {
-    console.info('Ship Selected:', answers.Starships.name);
-    console.info('Pilot Selected:', answers.Pilots.name);
-    console.info('Pilot Details', answers.Pilots);
-  });
-}
