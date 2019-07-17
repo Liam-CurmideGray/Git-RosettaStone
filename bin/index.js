@@ -1,91 +1,88 @@
 #!/usr/bin/env node
 
-const axios = require('axios');
-const inquirer = require('inquirer');
+const axios = require("axios");
+const inquirer = require("inquirer");
 
+getAPI().then(response => InquirerQ(response));
 
-let starShipResponse = [];
-let starShipsAPI;
+async function getAPI() {
+  let StarshipUrl = `https://swapi.co/api/starships/`;
+  let starShipResponse = [];
 
+  while (StarshipUrl != null) {
+    const starShipsAPI = await axios.get(StarshipUrl);
 
-; (async () => {
-  for (i = 1; i <= 4; i++) {
+    for (i = 0; i < starShipsAPI.data.results.length; i++) {
+      let ShipName = starShipsAPI.data.results[i].name;
+      let PilotUrls = starShipsAPI.data.results[i].pilots;
 
-
-    starShipsAPI = await axios({
-
-      url: `https://swapi.co/api/starships/?page=${i}`,
-      method: 'get'
-
-    });
-    starShipResponse.push(...starShipsAPI.data.results);
-
-  }
-
-  function getStarships() {
-    let shipObj = [];
-    for (i = 0; i < starShipResponse.length; i++) {
-
-
-      shipObj.push({
-        name: starShipResponse[i].name,
+      starShipResponse.push({
+        name: ShipName,
         value: {
-          name: starShipResponse[i].name,
-          url: starShipResponse[i].pilots
+          name: ShipName,
+          url: PilotUrls
         }
       });
-
     }
+    StarshipUrl = starShipsAPI.data.next;
+  }
+  return starShipResponse;
+}
 
-    return shipObj;
+function InquirerQ(starShipResponse) {
+  inquirer.prompt(Questions(starShipResponse)).then(answers => {
+    console.info("Ship Selected:", answers.Starships.name);
+    console.info("Pilot Selected:", answers.Pilots.name);
+    console.info("Pilot Details", answers.Pilots);
+  });
+}
+
+function Questions(starShipResponse) {
+  return [
+    {
+      type: "list",
+      name: "Starships",
+      message: "Select a Starship",
+      choices: starShipResponse
+    },
+    {
+      type: "list",
+      name: "Pilots",
+      message: "Select Pilot",
+      choices(answers) {
+        return GetPilots(answers.Starships);
+      }
+    }
+  ];
+}
+
+async function GetPilots(StarshipKey) {
+  const PilotUrls = StarshipKey.url;
+
+  let array = [];
+
+  if (PilotUrls.length === 0) {
+    array.push({
+      name: "No Pilots",
+      value: {
+        name: "No Details found"
+      }
+    });
+    return array;
   }
 
-
-  let StarshipQ = [{
-    type: 'list',
-    name: 'Starships',
-    message: 'Select a Starship',
-    choices: getStarships()
-  },
-  {
-    type: 'list',
-    name: 'Pilots',
-    message: 'Select Pilot',
-    choices(answers)
-    {return GetPilots(answers.Starships) }
-  }];
-
-  async function GetPilots(StarshipKey) {
-    StarshipKey = StarshipKey.url;
- 
-    let array = [];
-
-    if(StarshipKey.length === 0) {
-      array.push('No Pilots pilot this Ship');
-      return array;
-    } 
-
-    for (i = 0; i < StarshipKey.length; i++) {
-      let pilot = await axios({
-        url: StarshipKey[i],
-        method: 'get'
-      });
-      array.push({
+  for (i = 0; i < PilotUrls.length; i++) {
+    const pilot = await axios({
+      url: PilotUrls[i],
+      method: "get"
+    });
+    array.push({
+      name: pilot.data.name,
+      value: {
         name: pilot.data.name,
-        value: {
-          name: pilot.data.name,
-          height: pilot.data.height
-        }
-      });
-    } 
-  
-    return array
-
-  };
-
-  inquirer.prompt(StarshipQ).then(answers => {
-    console.info('Ship Selected:', answers.Starships.name);
-    console.info('Pilot Selected:', answers.Pilots.name);
-    console.info('Pilot Details', answers.Pilots);
-  });
-})()
+        height: pilot.data.height
+      }
+    });
+  }
+  return array;
+}
