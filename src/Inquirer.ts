@@ -1,60 +1,63 @@
 import inquirer from "inquirer";
-import {httpGet} from "./http.service";
+import { get } from "./http.service";
 import {
-  ShipModule,
-  Value,
-  PilotAnswerValue,
+  StarwarsModule,
+  StarshipValue,
+  PilotValue,
   StarshipAnswer,
   PilotAnswer
-} from "./StarwarsModel";
+} from "./starwars.model";
 
-export function InquirerQ(starShipResponse: ShipModule<Value>[]): void {
-  inquirer.prompt(Questions(starShipResponse)).then(answers => {
-    console.info("Ship Selected:", answers.Starship.name);
-    console.info("Pilot Selected:", answers.Pilot.name);
-    console.info("Pilot Details", answers.Pilot);
+export function InquirerQ(
+  starshipsResponse: StarwarsModule<StarshipValue>[]): void {
+  inquirer.prompt(Questions(starshipsResponse)).then(answers => {
+    console.info("Ship Selected:", answers.starship.name);
+    console.info("Pilot Selected:", answers.pilot.name);
+    console.info("Pilot Details", answers.pilot);
   });
 }
 
 export function Questions(
-  starShipResponse: ShipModule<Value>[]
+  starshipsResponse: StarwarsModule<StarshipValue>[]
 ): inquirer.ListQuestion<StarshipAnswer & PilotAnswer>[] {
-  let Ship: inquirer.Question<PilotAnswer> = {
+  let starshipQuestion: inquirer.Question<PilotAnswer> = {
     type: "list",
-    name: "Starship",
+    name: "starship",
     message: "Select a Starship",
-    choices: starShipResponse
+    choices: starshipsResponse
   };
 
-  let Pilot: inquirer.Question<StarshipAnswer> = {
+  let pilotQuestion: inquirer.Question<StarshipAnswer> = {
     type: "list",
-    name: "Pilot",
+    name: "pilot",
     message: "Select Pilot",
     choices(answers) {
-      return GetPilots(answers.Starship.url);
+      return GetPilots(answers.starship.pilotUrls);
     }
   };
-  return [Ship, Pilot];
+  return [starshipQuestion, pilotQuestion];
 }
 
-async function GetPilots(StarshipKey: string[]): Promise<ShipModule<PilotAnswerValue>[]> {
-   let array: ShipModule<PilotAnswerValue>[] = [];
+async function GetPilots(
+  pilotUrls: string[]
+): Promise<StarwarsModule<PilotValue>[]> {
+  let pilotDetails: StarwarsModule<PilotValue>[] = [];
 
-  if (StarshipKey.length === 0) {
-    array.push({
+  if (pilotUrls.length === 0) {
+    pilotDetails.push({
       name: "No Pilots",
       value: {
         name: "No Details found",
         height: 0
       }
     });
-    return array;
+    return pilotDetails;
   }
 
-  for (let i = 0; i < StarshipKey.length; i++) {
-    const pilot = await httpGet(StarshipKey[i]);
+  for (let i = 0; i < pilotUrls.length; i++) {
+    const pilot = await get(pilotUrls[i]);
 
-    array.push({
+    pilotDetails.push({
       name: pilot.data.name,
       value: {
         name: pilot.data.name,
@@ -62,5 +65,5 @@ async function GetPilots(StarshipKey: string[]): Promise<ShipModule<PilotAnswerV
       }
     });
   }
-  return array;
+  return pilotDetails;
 }

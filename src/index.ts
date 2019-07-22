@@ -1,35 +1,30 @@
-import {httpGet} from "./http.service";
-import {InquirerQ} from "./Inquirer";
-import {ShipModule, Value} from "./StarwarsModel";
+import { get } from "./http.service";
+import { InquirerQ } from "./inquirer";
+import { StarwarsModule, StarshipValue } from "./starwars.model";
 
-getStarships().then(response => InquirerQ(response));
+getStarships().then(starshipsResponse => InquirerQ(starshipsResponse));
 
-async function getStarships(): Promise<ShipModule<Value>[]> {
-  let StarshipUrl = `https://swapi.co/api/starships/`;
-  let starShipResponse: ShipModule<Value>[] = [];
+async function getStarships(): Promise<StarwarsModule<StarshipValue>[]> {
+  let starshipUrl = `https://swapi.co/api/starships/`;
+  let starshipDetails: StarwarsModule<StarshipValue>[] = [];
 
-  while (StarshipUrl != null) {
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    const starShipsApi = await httpGet(StarshipUrl);
+  while (starshipUrl != null) {
+    const starshipsApi = await get(starshipUrl);
 
-    for (let i = 0; i < starShipsApi.data.results.length; i++) {
+    for (let i = 0; i < starshipsApi.data.results.length; i++) {
+      let starshipName: string = starshipsApi.data.results[i].name;
+      let pilotUrls: string[] = starshipsApi.data.results[i].pilots;
 
-      let ShipName: string = starShipsApi.data.results[i].name;
-      let PilotUrls: string[] = starShipsApi.data.results[i].pilots;
-
-      starShipResponse.push({
-        name: ShipName,
+      starshipDetails.push({
+        name: starshipName,
         value: {
-          name: ShipName,
-          url: PilotUrls
+          name: starshipName,
+          pilotUrls: pilotUrls
         }
       });
     }
-    StarshipUrl = starShipsApi.data.next;
+    starshipUrl = starshipsApi.data.next;
   }
 
-  return starShipResponse;
+  return starshipDetails;
 }
-
-
-
