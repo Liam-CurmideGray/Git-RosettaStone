@@ -23,10 +23,16 @@
   "homepage": "https://github.com/Liam-CurmideGray/Git-RosettaStone#readme",
   "dependencies": {
     "axios": "^0.19.0",
+    "chalk": "^2.4.2",
+    "clear": "^0.1.0",
+    "clui": "^0.3.6",
+    "figlet": "^1.2.3",
     "inquirer": "^6.4.1",
     "typescript": "^3.5.3"
   },
   "devDependencies": {
+    "@types/clui": "^0.3.0",
+    "@types/figlet": "^1.2.0",
     "@types/inquirer": "^6.0.3"
   }
 }

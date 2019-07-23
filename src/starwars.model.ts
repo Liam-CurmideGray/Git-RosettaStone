@@ -21,7 +21,7 @@ export interface ShipAnswers {
 }
 
 export interface StarshipAnswer {
-  starship: StarshipValue; 
+  starship: StarshipValue;
 }
 
 export interface PilotAnswer {
