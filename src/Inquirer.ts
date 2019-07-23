@@ -12,18 +12,18 @@ import {
   PilotAnswer
 } from "./starwars.model";
 
-export function InquirerQ(
+export function inquirerQ(
   starshipsResponse: StarwarsModule<StarshipValue>[],
   buffer: Spinner
 ): void {
   inquirer
-    .prompt(StarwarsQuestions(starshipsResponse, buffer))
+    .prompt(starwarsQuestions(starshipsResponse, buffer))
     .then(answers => {
       console.info("Ship Selected:", answers.starship.name);
       console.info("Pilot Selected:", answers.pilot.name);
       console.info("Pilot Details", answers.pilot);
 
-      inquirer.prompt(ClearQuestion()).then(answer => {
+      inquirer.prompt(clearQuestion()).then(answer => {
         if (answer.clearAns == "Yes") {
           clear();
         }
@@ -31,7 +31,7 @@ export function InquirerQ(
     });
 }
 
-export function StarwarsQuestions(
+export function starwarsQuestions(
   starshipsResponse: StarwarsModule<StarshipValue>[],
   buffer: Spinner
 ): inquirer.ListQuestion<StarshipAnswer & PilotAnswer>[] {
@@ -50,13 +50,13 @@ export function StarwarsQuestions(
     message: "Select Pilot",
     choices(answers) {
       buffer = startAnimation();
-      return GetPilots(answers.starship.pilotUrls, buffer);
+      return getPilots(answers.starship.pilotUrls, buffer);
     }
   };
   return [starshipQuestion, pilotQuestion];
 }
 
-export function ClearQuestion(): inquirer.ListQuestion<Record<string, any>> {
+export function clearQuestion(): inquirer.ListQuestion<Record<string, any>> {
   let clearQ: inquirer.Question<Record<string, any>> = {
     type: "list",
     name: "clearAns",
@@ -67,7 +67,7 @@ export function ClearQuestion(): inquirer.ListQuestion<Record<string, any>> {
   return clearQ;
 }
 
-async function GetPilots(
+async function getPilots(
   pilotUrls: string[],
   buffer: Spinner
 ): Promise<StarwarsModule<PilotValue>[]> {
