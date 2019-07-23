@@ -1,7 +1,9 @@
 import inquirer from "inquirer";
-import { get as Get } from "./http.service";
 import clear = require("clear");
-import { StartAnimation, StopAnimation } from "./loaderAnimation";
+import { Spinner } from "clui";
+
+import { get } from "./http.service";
+import { startAnimation, stopAnimation } from "./loader.animation";
 import {
   StarwarsModule,
   StarshipValue,
@@ -9,7 +11,6 @@ import {
   StarshipAnswer,
   PilotAnswer
 } from "./starwars.model";
-import { Spinner } from "clui";
 
 export function InquirerQ(
   starshipsResponse: StarwarsModule<StarshipValue>[],
@@ -34,21 +35,21 @@ export function StarwarsQuestions(
   starshipsResponse: StarwarsModule<StarshipValue>[],
   buffer: Spinner
 ): inquirer.ListQuestion<StarshipAnswer & PilotAnswer>[] {
-  StopAnimation(buffer);
+  stopAnimation(buffer);
 
-  let starshipQuestion: inquirer.Question<PilotAnswer> = {
+  const starshipQuestion: inquirer.Question<PilotAnswer> = {
     type: "list",
     name: "starship",
     message: "Select a Starship",
     choices: starshipsResponse
   };
 
-  let pilotQuestion: inquirer.Question<StarshipAnswer> = {
+  const pilotQuestion: inquirer.Question<StarshipAnswer> = {
     type: "list",
     name: "pilot",
     message: "Select Pilot",
     choices(answers) {
-      buffer = StartAnimation();
+      buffer = startAnimation();
       return GetPilots(answers.starship.pilotUrls, buffer);
     }
   };
@@ -71,9 +72,9 @@ async function GetPilots(
   buffer: Spinner
 ): Promise<StarwarsModule<PilotValue>[]> {
   let pilotDetails: StarwarsModule<PilotValue>[] = [];
-  
+
   if (pilotUrls.length === 0) {
-    StopAnimation(buffer);
+    stopAnimation(buffer);
     pilotDetails.push({
       name: "No Pilots",
       value: {
@@ -85,7 +86,7 @@ async function GetPilots(
   }
 
   for (let i = 0; i < pilotUrls.length; i++) {
-    const pilot = await Get(pilotUrls[i]);
+    const pilot = await get(pilotUrls[i]);
 
     pilotDetails.push({
       name: pilot.data.name,
@@ -95,6 +96,6 @@ async function GetPilots(
       }
     });
   }
-  StopAnimation(buffer);
+  stopAnimation(buffer);
   return pilotDetails;
 }

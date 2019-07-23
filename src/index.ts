@@ -1,12 +1,12 @@
-import { get as Get } from "./http.service";
+import { get } from "./http.service";
 import { InquirerQ } from "./inquirer";
 import { StarwarsModule, StarshipValue } from "./starwars.model";
-import { TitleScreen } from "./titleScreen";
-import { StartAnimation } from "./loaderAnimation";
+import { titleScreen } from "./titleScreen";
+import { startAnimation } from "./loader.animation";
 import { Spinner } from "clui";
 
-TitleScreen();
-let buffer: Spinner = StartAnimation();
+titleScreen();
+const buffer: Spinner = startAnimation();
 getStarships().then(starshipsResponse => InquirerQ(starshipsResponse, buffer));
 
 async function getStarships(): Promise<StarwarsModule<StarshipValue>[]> {
@@ -14,17 +14,17 @@ async function getStarships(): Promise<StarwarsModule<StarshipValue>[]> {
   let starshipDetails: StarwarsModule<StarshipValue>[] = [];
 
   while (starshipUrl != null) {
-    const starshipsApi = await Get(starshipUrl);
+    const starshipsApi = await get(starshipUrl);
 
     for (let i = 0; i < starshipsApi.data.results.length; i++) {
-      let starshipName: string = starshipsApi.data.results[i].name;
+      let name: string = starshipsApi.data.results[i].name;
       let pilotUrls: string[] = starshipsApi.data.results[i].pilots;
 
       starshipDetails.push({
-        name: starshipName,
+        name,
         value: {
-          name: starshipName,
-          pilotUrls: pilotUrls
+          name,
+          pilotUrls
         }
       });
     }

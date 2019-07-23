@@ -1,7 +1,7 @@
 import { Spinner } from "clui";
 
-export function StartAnimation() {
-  let loadingText: string = `Loading data...`;
+export function startAnimation(): Spinner {
+  let loadingText = `Loading data...`;
 
   let buffer: Spinner = new Spinner(loadingText, [
     "◜",
@@ -18,6 +18,6 @@ export function StartAnimation() {
   return buffer;
 }
 
-export function StopAnimation(buffer: Spinner) {
+export function stopAnimation(buffer: Spinner): void {
   buffer.stop();
 }

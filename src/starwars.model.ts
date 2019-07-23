@@ -13,7 +13,7 @@ export interface PilotValue {
   height: number;
 }
 
-export interface ShipAnswers {
+export interface ShipAnswer {
   type: string;
   name: string;
   message: string;

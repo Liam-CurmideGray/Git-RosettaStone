@@ -2,7 +2,7 @@ import figlet from "figlet";
 import chalk from "chalk";
 
 
-export function TitleScreen(): void {
+export function titleScreen() {
     
     figlet(`Starwars`, function(err: Error | null, result?: string | undefined): void {
     if(err != null) {
