@@ -1,13 +1,15 @@
-import { get } from "./http.service";
-import { InquirerQ } from "./inquirer";
-import { StarwarsModule, StarshipValue } from "./starwars.model";
-import { titleScreen } from "./titleScreen";
-import { startAnimation } from "./loader.animation";
 import { Spinner } from "clui";
+
+import { get } from "./http.service";
+import { inquirerQ } from "./inquirer";
+
+import { startAnimation } from "./loader.animation";
+import { StarwarsModule, StarshipValue } from "./starwars.model";
+import { titleScreen } from "./title.screen";
 
 titleScreen();
 const buffer: Spinner = startAnimation();
-getStarships().then(starshipsResponse => InquirerQ(starshipsResponse, buffer));
+getStarships().then(starshipsResponse => inquirerQ(starshipsResponse, buffer));
 
 async function getStarships(): Promise<StarwarsModule<StarshipValue>[]> {
   let starshipUrl = `https://swapi.co/api/starships/`;
